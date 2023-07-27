@@ -4,7 +4,6 @@ import React from "react";
 // Import User-defined modules
 import { IAppTypes } from "./types/App.types";
 import * as Components from "./components";
-import "./App.css";
 
 /**
  * App component of our application.
