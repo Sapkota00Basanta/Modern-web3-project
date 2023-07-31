@@ -10,8 +10,8 @@ import { ILoaderTypes } from "../types/components/Loader.types";
  */
 export const Loader: React.FC<ILoaderTypes> = () => {
   return (
-    <>
-      <h1> Hello from Loader component.</h1>
-    </>
+    <div className=" flex justify-center items-center py-2">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-700" />
+    </div>
   );
 };

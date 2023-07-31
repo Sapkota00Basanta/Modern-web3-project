@@ -4,3 +4,12 @@
 export interface IWelcomeTypes {
   props?: any;
 }
+
+export interface IWelcomeInputTypes
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  name: string;
+  handleChange: (
+    event: React.ChangeEvent<HTMLInputElement>,
+    name: string
+  ) => void;
+}
