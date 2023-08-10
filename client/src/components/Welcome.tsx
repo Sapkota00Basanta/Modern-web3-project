@@ -1,5 +1,5 @@
 // Import Third-party Modules
-import React from "react";
+import React, { useContext } from "react";
 import { AiFillPlayCircle } from "react-icons/ai";
 import { SiEthereum } from "react-icons/si";
 import { BsInfoCircle } from "react-icons/bs";
@@ -11,7 +11,7 @@ import {
 } from "../types/components/Welcome.types";
 import { Loader } from "./";
 import { EthereumIconSize, InfoIconSize } from "../constants";
-
+import { TransactionContext } from "../context/TransactionContext";
 /**
  * Global/Common Input component for Welcome component.
  */
@@ -40,6 +40,8 @@ border-[0.5px] border-gray-400 text-sm font-light text-white sm:px-0 sm:min-w-[1
  * @returns Welcome styled page
  */
 export const Welcome: React.FC<IWelcomeTypes> = () => {
+  const { example } = useContext(TransactionContext);
+  console.log(example);
   /**
    * Callback function to connect with wallet.
    */
