@@ -1,3 +1,6 @@
+import { ChangeEvent, ChangeEventHandler } from "react";
+import { IFormDataHandleChangeProps } from "../context/TransactionContext.types";
+
 /**
  * This consists of all the type defination for Welcome page.
  */
@@ -8,8 +11,5 @@ export interface IWelcomeTypes {
 export interface IWelcomeInputTypes
   extends React.InputHTMLAttributes<HTMLInputElement> {
   name: string;
-  handleChange: (
-    event: React.ChangeEvent<HTMLInputElement>,
-    name: string
-  ) => void;
+  handleChange: ({ event, name }: IFormDataHandleChangeProps) => void;
 }

@@ -12,6 +12,7 @@ import {
 import { Loader } from "./";
 import { EthereumIconSize, InfoIconSize } from "../constants";
 import { TransactionContext } from "../context/TransactionContext";
+
 /**
  * Global/Common Input component for Welcome component.
  */
@@ -23,7 +24,7 @@ export const Input: React.FC<IWelcomeInputTypes> = ({
   <input
     name={name}
     step="0.0001"
-    onChange={(event) => handleChange(event, name)}
+    onChange={(event) => handleChange({ event, name })}
     className="w-full my-2 rounded-sm p-2 outline-none border-none bg-transparent text-white text-sm white-glassmorphism"
     {...props}
   />
@@ -40,17 +41,26 @@ border-[0.5px] border-gray-400 text-sm font-light text-white sm:px-0 sm:min-w-[1
  * @returns Welcome styled page
  */
 export const Welcome: React.FC<IWelcomeTypes> = () => {
-  const { example } = useContext(TransactionContext);
-  console.log(example);
-  /**
-   * Callback function to connect with wallet.
-   */
-  const connectWallet = () => {};
+  const {
+    connectWallet,
+    currentAccount,
+    formData,
+    sendTransaction,
+    formDataHandleChange,
+  } = useContext(TransactionContext);
 
   /**
    * Callback function to handle submit.
    */
-  const handleSubmit = () => {};
+  const handleSubmit = (event: React.SyntheticEvent) => {
+    const { addressTo, amount, keyword, message } = formData;
+
+    event.preventDefault();
+
+    if (!addressTo || !amount || !keyword || !message) return;
+
+    sendTransaction();
+  };
   return (
     <div className="flex w-full justify-center items-center">
       <div className=" flex flex-col items-start justify-between py-12 px-4 mf:flex-row md:p-20">
@@ -62,15 +72,17 @@ export const Welcome: React.FC<IWelcomeTypes> = () => {
             Explore the crypto world. Buy and sell cryptocurrencies easily on
             Krypto.
           </p>
-          <button
-            type="button"
-            className="flex flex-row justify-center items-center my-5 bg-login_primary p-3 cursor-pointer rounded-full hover:bg-login_secondary"
-            onClick={connectWallet}
-          >
-            <p className=" text-white text-base font-semibold">
-              Connect Wallet
-            </p>
-          </button>
+          {!currentAccount && (
+            <button
+              type="button"
+              className="flex flex-row justify-center items-center my-5 bg-login_primary p-3 cursor-pointer rounded-full hover:bg-login_secondary"
+              onClick={connectWallet}
+            >
+              <p className=" text-white text-base font-semibold">
+                Connect Wallet
+              </p>
+            </button>
+          )}
           <div className="grid grid-cols-2 sm:grid-cols-3 w-full mt-10">
             <div className={`rounded-tl-2xl ${commonStyles}`}>Relability</div>
             <div className={commonStyles}>Security</div>
@@ -102,25 +114,25 @@ export const Welcome: React.FC<IWelcomeTypes> = () => {
               name="addressTo"
               placeholder="Address To"
               type="text"
-              handleChange={() => {}}
+              handleChange={formDataHandleChange}
             />
             <Input
               placeholder="Amount (ETH)"
               name="amount"
               type="number"
-              handleChange={() => {}}
+              handleChange={formDataHandleChange}
             />
             <Input
               placeholder="Keyword (Gif)"
               name="keyword"
               type="text"
-              handleChange={() => {}}
+              handleChange={formDataHandleChange}
             />
             <Input
               placeholder="Enter Message"
               name="message"
               type="text"
-              handleChange={() => {}}
+              handleChange={formDataHandleChange}
             />
 
             <div className="h-[1px] w-full bg-gray-400 my-4" />
