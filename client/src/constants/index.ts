@@ -6,6 +6,7 @@ import abi from "./Transactions.json";
 export const NavbarIconSize = 28;
 export const EthereumIconSize = 21;
 export const InfoIconSize = 17;
+export const servicesIconSize = 21;
 
 /**
  * This consists of all the details required for connection
