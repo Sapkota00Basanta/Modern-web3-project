@@ -4,3 +4,14 @@
 export interface ITransactionTypes {
   props?: any;
 }
+
+export type ITransactionCardType = {
+  id?: number;
+  url?: string;
+  message?: string;
+  amount: string;
+  addressTo: string;
+  addressFrom: string;
+  timestamp: string;
+  keyword: string;
+};

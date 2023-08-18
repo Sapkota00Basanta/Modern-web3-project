@@ -1,19 +1,15 @@
 // Import Third-party Modules
-import {
-  ethers,
-  formatEther,
-  formatUnits,
-  parseEther,
-  parseUnits,
-} from "ethers";
+import { ethers, formatUnits, parseUnits } from "ethers";
 import { PropsWithChildren, createContext, useEffect, useState } from "react";
 
 // Import User-Defined Modules
 import { contractABI, contractAddress } from "../constants";
 import {
-  ITransactionContextTypes,
-  IFormDataTypes,
+  IBlockchainTransactionTypes,
   IFormDataHandleChangeProps,
+  IFormDataTypes,
+  IFormattedTranasctionTypes,
+  ITransactionContextTypes,
 } from "../types/context/TransactionContext.types";
 
 // Creating a context variable
@@ -23,6 +19,18 @@ export const TransactionContext = createContext<ITransactionContextTypes>({
   formData: { addressTo: "", amount: "", keyword: "", message: "" },
   sendTransaction: async () => null,
   formDataHandleChange: () => null,
+  transactions: [
+    {
+      addressFrom: "",
+      addressTo: "",
+      message: "",
+      keyword: "",
+      timestamp: "",
+      amount: "",
+      url: "",
+    },
+  ],
+  isLoading: false,
 });
 
 // Fetching ethereum object info from window
@@ -54,6 +62,19 @@ export const TransactionProvider: React.FC<any> = ({
   const [transactionCount, setTransactionCount] = useState<number>(
     parseInt(localStorage.getItem("transactionCount")!)
   );
+  const [transactions, setTransactions] = useState<
+    Array<IFormattedTranasctionTypes>
+  >([
+    {
+      addressFrom: "",
+      addressTo: "",
+      message: "",
+      amount: "",
+      keyword: "",
+      timestamp: "",
+      url: "",
+    },
+  ]);
 
   // Handle change event handler for keyboard input event
   const formDataHandleChange = ({
@@ -71,6 +92,33 @@ export const TransactionProvider: React.FC<any> = ({
     }));
   };
 
+  const getAllTransactions = async () => {
+    try {
+      if (!ethereum) return alert("Please connect with metamask.");
+      const transactionContract = await getEthereumContract();
+      const availableTransactions =
+        await transactionContract.getAllTransactions();
+
+      const formattedTransactions = availableTransactions.map(
+        (transaction: IBlockchainTransactionTypes) => ({
+          addressFrom: transaction.sender,
+          addressTo: transaction.receiver,
+          message: transaction.message,
+          keyword: transaction.keyword,
+          timestamp: new Date(
+            parseInt(transaction.timestamp) * 1000
+          ).toLocaleString(),
+          amount: formatUnits(transaction.amount, "gwei").toString(),
+          url: "https://media4.popsugar-assets.com/files/2013/11/07/832/n/1922398/eb7a69a76543358d_28.gif",
+        })
+      );
+      setTransactions(formattedTransactions);
+    } catch (error) {
+      console.error(error);
+      throw new Error("No ethereum object found.");
+    }
+  };
+
   const checkIfWalletIsConnected = async () => {
     try {
       if (!ethereum) return alert("Please connect with metamask");
@@ -83,10 +131,22 @@ export const TransactionProvider: React.FC<any> = ({
       if (accounts && accounts?.length > 0) {
         setCurrentAccount(accounts[0]);
 
-        // get all the transactions
+        await getAllTransactions();
       } else {
         console.log("No accounts found.");
       }
+    } catch (error) {
+      console.error(error);
+      throw new Error("No ethereum object found.");
+    }
+  };
+
+  const checkIfTransactionExits = async () => {
+    try {
+      const transactionContract = await getEthereumContract();
+      const transactionCount = await transactionContract.getTransactionCount();
+
+      window.localStorage.setItem("transactionCount", transactionCount);
     } catch (error) {
       console.error(error);
       throw new Error("No ethereum object found.");
@@ -136,17 +196,14 @@ export const TransactionProvider: React.FC<any> = ({
         keyword
       );
 
-      console.log(transactionHash);
-
       // Setting the loading state to true for processing the transaction
       setIsLoading(true);
-      console.log(`Loading - ${transactionHash.hash}`);
+      // console.log(`Loading - ${transactionHash.hash}`);
       await transactionContract.waitForDeployment();
       setIsLoading(false);
-      console.log(`Success - ${transactionHash.hash}`);
+      // console.log(`Success - ${transactionHash.hash}`);
 
       const transactionCount = await transactionContract.getTransactionCount();
-
       setTransactionCount(parseInt(transactionCount));
     } catch (error) {
       console.error(error);
@@ -156,6 +213,7 @@ export const TransactionProvider: React.FC<any> = ({
   // Call the function only at the time of start
   useEffect(() => {
     checkIfWalletIsConnected();
+    checkIfTransactionExits();
   }, []);
 
   return (
@@ -166,6 +224,8 @@ export const TransactionProvider: React.FC<any> = ({
         formData,
         sendTransaction,
         formDataHandleChange,
+        transactions,
+        isLoading,
       }}
     >
       {children}

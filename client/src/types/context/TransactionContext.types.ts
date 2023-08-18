@@ -17,6 +17,8 @@ export interface ITransactionContextTypes {
   // setFormData: Dispatch<SetStateAction<IFormDataTypes>>;
   sendTransaction: () => Promise<any | null | void>;
   formDataHandleChange: ({ event, name }: IFormDataHandleChangeProps) => void;
+  transactions: Array<IFormattedTranasctionTypes>;
+  isLoading: boolean;
 }
 
 export type IFormDataTypes = {
@@ -29,4 +31,23 @@ export type IFormDataTypes = {
 export type IFormDataHandleChangeProps = {
   event: ChangeEvent<HTMLInputElement>;
   name: string;
+};
+
+export type IFormattedTranasctionTypes = {
+  addressFrom: string;
+  addressTo: string;
+  amount: string;
+  timestamp: string;
+  message: string;
+  keyword: string;
+  url: string;
+};
+
+export type IBlockchainTransactionTypes = {
+  receiver: string;
+  sender: string;
+  amount: string;
+  timestamp: string;
+  message: string;
+  keyword: string;
 };

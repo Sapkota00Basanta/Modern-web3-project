@@ -12,6 +12,7 @@ import {
 import { Loader } from "./";
 import { EthereumIconSize, InfoIconSize } from "../constants";
 import { TransactionContext } from "../context/TransactionContext";
+import { shortenAddress } from "../utils/shortenAddress";
 
 /**
  * Global/Common Input component for Welcome component.
@@ -47,6 +48,7 @@ export const Welcome: React.FC<IWelcomeTypes> = () => {
     formData,
     sendTransaction,
     formDataHandleChange,
+    isLoading,
   } = useContext(TransactionContext);
 
   /**
@@ -102,7 +104,9 @@ export const Welcome: React.FC<IWelcomeTypes> = () => {
                 <BsInfoCircle fontSize={InfoIconSize} color="#fff" />
               </div>
               <div>
-                <p className="text-white font-light text-sm">Address</p>
+                <p className="text-white font-light text-sm">
+                  {currentAccount ? shortenAddress(currentAccount) : `Address`}
+                </p>
                 <p className="text-white font-semibold text-lg mt-1">
                   Ethereum
                 </p>
@@ -137,7 +141,7 @@ export const Welcome: React.FC<IWelcomeTypes> = () => {
 
             <div className="h-[1px] w-full bg-gray-400 my-4" />
 
-            {false ? (
+            {isLoading ? (
               <Loader />
             ) : (
               <button
